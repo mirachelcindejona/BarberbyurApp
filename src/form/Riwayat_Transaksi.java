@@ -22,192 +22,208 @@ public class Riwayat_Transaksi extends javax.swing.JPanel {
      * Creates new form Riwayat_Transaksi
      */
     public Riwayat_Transaksi() {
-        initComponents();
-        
-        setBorder(
-                javax.swing.BorderFactory.createEmptyBorder(0, 0, 40, 40)
-        );
-        
-        tableContainer.setBackground(ThemeColor.SURFACE);
-        tableContainer.setRadius(20);
 
-        totalTransaksi.setBackground(ThemeColor.SURFACE_2);
+            initComponents();
+            setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 40, 40));
 
-        txtSearch.setPreferredSize(new java.awt.Dimension(250, 40));
-        txtSearch.setHint("Cari transaksi...");
-        txtSearch.getDocument().addDocumentListener(
-        
-        new javax.swing.event.DocumentListener() {
+            tableContainer.setBackground(ThemeColor.SURFACE);
+            tableContainer.setRadius(20);
 
-        @Override
-        public void insertUpdate(
-            javax.swing.event.DocumentEvent e
-        ) {
-            refreshTable();
-        }
+            txtSearch.setPreferredSize(
+                new java.awt.Dimension(250, 40)
+            );
 
-        @Override
-        public void removeUpdate(
-            javax.swing.event.DocumentEvent e
-        ) {
-            refreshTable();
-        }
+            txtSearch.setHint("Cari transaksi...");
 
-        @Override
-        public void changedUpdate(
-            javax.swing.event.DocumentEvent e
-        ) {
-            refreshTable();
-        }
-    });
-        
-        tableContainer.setRadius(20);
-        
-        
-        scrollTransaksi.setBorder(javax.swing.BorderFactory.createEmptyBorder());
+            // realtime search
+            txtSearch.getDocument().addDocumentListener(
+                new javax.swing.event.DocumentListener() {
+                    @Override
+                    public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                        refreshTable();
+                    }
+                    @Override
+                    public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                        refreshTable();
+                    }
+                    @Override
+                    public void changedUpdate(javax.swing.event.DocumentEvent e) {
+                        refreshTable();
+                    }
+                }
+            );
 
-        tableContainer.setBorder(javax.swing.BorderFactory.createEmptyBorder(15, 15, 15, 15));
+            scrollTransaksi.setBorder(
+                javax.swing.BorderFactory.createEmptyBorder()
+            );
 
-        tableTransaksi.getTableHeader().setOpaque(false);
-        tableTransaksi.getTableHeader().setBackground(ThemeColor.SURFACE_2);
-        tableTransaksi.getTableHeader().setForeground(ThemeColor.TEXT_MUTED);
-        tableTransaksi.getTableHeader().setFont(new java.awt.Font("SansSerif", java.awt.Font.BOLD, 13));
-        tableTransaksi.getTableHeader().setBorder(null);
+            tableContainer.setBorder(
+                javax.swing.BorderFactory.createEmptyBorder(15, 15, 15, 15)
+            );
 
-        scrollTransaksi.getVerticalScrollBar().setUI(new component.ModernScrollBarUI());
-        scrollTransaksi.getVerticalScrollBar().setPreferredSize(new java.awt.Dimension(10, 0));
-        scrollTransaksi.getViewport().setBackground(ThemeColor.SURFACE);
-        scrollTransaksi.setBackground(ThemeColor.SURFACE);
-        scrollTransaksi.setBorder(null);
+            // custom header
+            tableTransaksi.getTableHeader().setOpaque(false);
+            tableTransaksi.getTableHeader().setBackground(ThemeColor.SURFACE_2);
+            tableTransaksi.getTableHeader().setForeground(ThemeColor.TEXT_MUTED);
+            tableTransaksi.getTableHeader().setFont(
+                new java.awt.Font("SansSerif", java.awt.Font.BOLD, 13)
+            );
+            tableTransaksi.getTableHeader().setBorder(null);
 
-        tableTransaksi.setShowGrid(false);
-        tableTransaksi.getTableHeader().setReorderingAllowed(false);
-        tableTransaksi.getTableHeader().setResizingAllowed(false);
-        tableTransaksi.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-        tableTransaksi.setRowHeight(56);
-        tableTransaksi.setIntercellSpacing(new java.awt.Dimension(0, 0));
-        tableTransaksi.setSelectionBackground(ThemeColor.SURFACE);
-        tableTransaksi.setSelectionForeground(ThemeColor.TEXT);
-        tableTransaksi.setFont(new java.awt.Font("SansSerif", java.awt.Font.PLAIN, 13));
-        tableTransaksi.getTableHeader().setPreferredSize(new java.awt.Dimension(0, 40));
-        tableTransaksi.setModel(new javax.swing.table.DefaultTableModel(
-            new Object[][]{},
-            new String[]{
-                "Waktu", "Pelanggan", "Kapster",
-                "Item", "Total", "Bayar", "Aksi"
+            // scrollbar
+            scrollTransaksi.getVerticalScrollBar().setUI(
+                new component.ModernScrollBarUI()
+            );
+            scrollTransaksi.getVerticalScrollBar().setPreferredSize(
+                new java.awt.Dimension(10, 0)
+            );
+            scrollTransaksi.getViewport().setBackground(ThemeColor.SURFACE);
+            scrollTransaksi.setBackground(ThemeColor.SURFACE);
+            scrollTransaksi.setBorder(null);
+
+            // table
+            tableTransaksi.setShowGrid(false);
+            tableTransaksi.getTableHeader().setReorderingAllowed(false);
+            tableTransaksi.getTableHeader().setResizingAllowed(false);
+            tableTransaksi.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+            
+            tableTransaksi.setRowHeight(56);
+            tableTransaksi.setIntercellSpacing(new java.awt.Dimension(0, 0));
+            tableTransaksi.setSelectionBackground(ThemeColor.SURFACE);
+            tableTransaksi.setSelectionForeground(ThemeColor.TEXT);
+            tableTransaksi.setFont(new java.awt.Font("SansSerif", java.awt.Font.PLAIN, 13));
+            tableTransaksi.getTableHeader().setPreferredSize(new java.awt.Dimension(0, 40));
+
+            tableTransaksi.setModel(
+                new javax.swing.table.DefaultTableModel(
+                    new Object[][]{},
+                    new String[]{
+                        "ID", "Waktu", "Pelanggan", "Kapster",
+                        "Item", "Total", "Bayar", "Aksi"
+                    }
+                ) {
+                    @Override
+                    public boolean isCellEditable(int row, int column) {
+                        return column == 7;
+                    }
+                }
+            );
+
+            // width kolom
+            int[] widths = { 0, 152, 178, 178, 178, 150, 150, 150 };
+            for (int i = 0; i < widths.length; i++) {
+                tableTransaksi.getColumnModel().getColumn(i).setPreferredWidth(widths[i]);
             }
-        ) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return column == 6;
-            }
-        });       
 
-        tableTransaksi.getColumnModel()
-            .getColumn(6)
-            .setCellRenderer(new table.ActionTransaksiRenderer());
+            // hide kolom ID
+            tableTransaksi.getColumnModel().getColumn(0).setMinWidth(0);
+            tableTransaksi.getColumnModel().getColumn(0).setMaxWidth(0);
+            tableTransaksi.getColumnModel().getColumn(0).setWidth(0);
 
-        tableTransaksi.getColumnModel()
-            .getColumn(6)
-            .setCellEditor(new table.ActionTransaksiEditor());
+            // renderer & editor aksi
+            tableTransaksi.getColumnModel().getColumn(7).setCellRenderer(
+                new table.ActionTransaksiRenderer()
+            );
+            tableTransaksi.getColumnModel().getColumn(7).setCellEditor(
+                new table.ActionTransaksiEditor()
+            );
 
             loadData("");
         }
-    
+
         private void loadData(String keyword) {
 
-        javax.swing.table.DefaultTableModel model =
-            (javax.swing.table.DefaultTableModel)
-            tableTransaksi.getModel();
+            DefaultTableModel model =
+                (DefaultTableModel) tableTransaksi.getModel();
+            model.setRowCount(0);
 
-        model.setRowCount(0);
+            try {
+                java.sql.Connection conn = Koneksi.getKoneksi();
 
-        try {
-
-            java.sql.Connection conn =
-                Koneksi.getKoneksi();
-
-            StringBuilder sql = new StringBuilder(
-                "SELECT " +
-                "t.tanggal, " +
-                "p.nama AS pelanggan, " +
-                "k.nama AS kapster, " +
-                "GROUP_CONCAT(i.nama SEPARATOR ', ') AS item, " +
-                "t.total, " +
-                "t.metode_pembayaran " +
-                "FROM transaksi t " +
-                "JOIN pelanggan p ON t.id_pelanggan = p.id " +
-                "JOIN kapster k ON t.id_kapster = k.id " +
-                "JOIN detail_transaksi dt ON t.id = dt.id_transaksi " +
-                "JOIN item i ON dt.id_item = i.id " +
-                "WHERE 1=1"
-            );
-
-            if (keyword != null && !keyword.trim().isEmpty()) {
-
-                sql.append(
-                    " AND (" +
-                    "p.nama LIKE ? OR " +
-                    "k.nama LIKE ? OR " +
-                    "i.nama LIKE ?)"
+                StringBuilder sql = new StringBuilder(
+                    "SELECT " +
+                    "t.id, " +
+                    "t.tanggal, " +
+                    // LEFT JOIN agar transaksi non-member tetap muncul
+                    "COALESCE(p.nama, 'Non-Member') AS pelanggan, " +
+                    "k.nama AS kapster, " +
+                    "GROUP_CONCAT(i.nama SEPARATOR ', ') AS item, " +
+                    "t.total, " +
+                    "t.metode_pembayaran " +
+                    "FROM transaksi t " +
+                    // Pakai LEFT JOIN agar non-member tidak hilang
+                    "LEFT JOIN pelanggan p ON t.id_pelanggan = p.id " +
+                    "JOIN kapster k ON t.id_kapster = k.id " +
+                    "JOIN detail_transaksi dt ON t.id = dt.id_transaksi " +
+                    "JOIN item i ON dt.id_item = i.id " +
+                    "WHERE 1=1"
                 );
-            }
 
-            sql.append(" GROUP BY t.id ORDER BY t.tanggal DESC");
+                if (keyword != null && !keyword.trim().isEmpty()) {
+                    sql.append(
+                        " AND (" +
+                        "p.nama LIKE ? OR " +
+                        "k.nama LIKE ? OR " +
+                        "i.nama LIKE ?" +
+                        ")"
+                    );
+                }
 
-            java.sql.PreparedStatement ps =
-                conn.prepareStatement(sql.toString());
+                sql.append(" GROUP BY t.id ORDER BY t.tanggal DESC");
 
-            int index = 1;
+                java.sql.PreparedStatement ps = conn.prepareStatement(sql.toString());
 
-            if (keyword != null && !keyword.trim().isEmpty()) {
+                int index = 1;
+                if (keyword != null && !keyword.trim().isEmpty()) {
+                    String cari = "%" + keyword.trim() + "%";
+                    ps.setString(index++, cari);
+                    ps.setString(index++, cari);
+                    ps.setString(index++, cari);
+                }
 
-                String cari =
-                    "%" + keyword.trim() + "%";
+                java.sql.ResultSet rs = ps.executeQuery();
 
-                ps.setString(index++, cari);
-                ps.setString(index++, cari);
-                ps.setString(index++, cari);
-            }
+                int jumlahTransaksi = 0;
+                int grandTotal      = 0;
 
-            java.sql.ResultSet rs =
-                ps.executeQuery();
+                while (rs.next()) {
+                    int total = rs.getInt("total");
+                    jumlahTransaksi++;
+                    grandTotal += total;
 
-            while (rs.next()) {
+                    model.addRow(new Object[]{
+                        rs.getInt("id"),
+                        rs.getString("tanggal"),
+                        rs.getString("pelanggan"),
+                        rs.getString("kapster"),
+                        rs.getString("item"),
+                        "Rp " + String.format("%,d", total).replace(',', '.'),
+                        rs.getString("metode_pembayaran"),
+                        ""
+                    });
+                }
 
-                model.addRow(new Object[]{
+                rs.close();
+                ps.close();
 
-                    rs.getString("tanggal"),
-                    rs.getString("pelanggan"),
-                    rs.getString("kapster"),
-                    rs.getString("item"),
-                    "Rp " + rs.getInt("total"),
-                    rs.getString("metode_pembayaran"),
-                    ""
-
-                });
-            }
-
-            rs.close();
-            ps.close();
+                // Update label total — dinamis dari hasil query
+                totalTransaksi.setText(
+                    "Total: Rp " +
+                    String.format("%,d", grandTotal).replace(',', '.') +
+                    " (" + jumlahTransaksi + " transaksi)"
+                );
 
             } catch (Exception e) {
-
                 javax.swing.JOptionPane.showMessageDialog(
                     this,
-                    "Gagal load data: " +
-                    e.getMessage()
+                    "Gagal load data: " + e.getMessage()
                 );
             }
         }
-        
+
         public void refreshTable() {
-
-        String keyword =
-            txtSearch.getText().trim();
-
-        loadData(keyword);
-    }
+            loadData(txtSearch.getText().trim());
+        }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -255,8 +271,8 @@ public class Riwayat_Transaksi extends javax.swing.JPanel {
             .addGap(0, 509, Short.MAX_VALUE)
             .addGroup(tableContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(tableContainerLayout.createSequentialGroup()
-                    .addComponent(scrollTransaksi, javax.swing.GroupLayout.PREFERRED_SIZE, 509, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 0, Short.MAX_VALUE)))
+                    .addComponent(scrollTransaksi, javax.swing.GroupLayout.DEFAULT_SIZE, 509, Short.MAX_VALUE)
+                    .addGap(0, 0, 0)))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);

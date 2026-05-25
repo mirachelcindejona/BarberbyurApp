@@ -148,7 +148,7 @@
                   <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="totalPoin" alignment="0" min="-2" pref="93" max="-2" attributes="0"/>
-                      <Component id="jLabel1" alignment="0" min="-2" pref="101" max="-2" attributes="0"/>
+                      <Component id="totalKaps" alignment="0" min="-2" pref="101" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace pref="198" max="32767" attributes="0"/>
               </Group>
@@ -162,7 +162,7 @@
                   <EmptySpace max="32767" attributes="0"/>
                   <Component id="totalPoin" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+                  <Component id="totalKaps" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -180,7 +180,7 @@
             <Property name="text" type="java.lang.String" value="Total Kapster"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JLabel" name="jLabel1">
+        <Component class="javax.swing.JLabel" name="totalKaps">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="SansSerif" size="18" style="1"/>
@@ -229,7 +229,7 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jLabel2" min="-2" pref="101" max="-2" attributes="0"/>
+                      <Component id="komisiKaps" min="-2" pref="101" max="-2" attributes="0"/>
                       <Component id="totalPoin1" min="-2" pref="205" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace pref="109" max="32767" attributes="0"/>
@@ -244,7 +244,7 @@
                   <EmptySpace pref="39" max="32767" attributes="0"/>
                   <Component id="totalPoin1" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
+                  <Component id="komisiKaps" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -262,7 +262,7 @@
             <Property name="text" type="java.lang.String" value="Komisi Kapster Bulan Ini"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JLabel" name="jLabel2">
+        <Component class="javax.swing.JLabel" name="komisiKaps">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="SansSerif" size="18" style="1"/>

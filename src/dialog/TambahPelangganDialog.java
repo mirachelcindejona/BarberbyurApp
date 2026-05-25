@@ -165,48 +165,50 @@ public class TambahPelangganDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_btnSimpanMouseClicked
 
     private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
-     String nama = namaField.getText().trim();
-    String noHp = noHPField.getText().trim();
+       String nama = namaField.getText().trim();
+       String noHp = noHPField.getText().trim();
 
-    // validasi input kosong
-    if (nama.isEmpty() || noHp.isEmpty()) {
-        javax.swing.JOptionPane.showMessageDialog(
-            this,
-            "Nama dan No. HP wajib diisi!",
-            "Peringatan",
-            javax.swing.JOptionPane.WARNING_MESSAGE
-        );
-        return;
-    }
+       if (nama.isEmpty() || noHp.isEmpty()) {
+           javax.swing.JOptionPane.showMessageDialog(
+               this,
+               "Nama dan No. HP wajib diisi!",
+               "Peringatan",
+               javax.swing.JOptionPane.WARNING_MESSAGE
+           );
+           return;
+       }
 
-    try {
-        Connection conn = Koneksi.getKoneksi();
-        String kode = generateKodePelanggan();
+       try {
+           Connection conn = Koneksi.getKoneksi();
+           String kode = generateKodePelanggan();
 
-        String sql = "INSERT INTO pelanggan (kode_pelanggan, nama, no_hp) VALUES (?, ?, ?)";
-        PreparedStatement ps = conn.prepareStatement(sql);
-        ps.setString(1, kode);
-        ps.setString(2, nama);
-        ps.setString(3, noHp);
-        ps.executeUpdate();
+           String sql = "INSERT INTO pelanggan " +
+               "(kode_pelanggan, nama, no_hp, total_kunjungan, point, tier) " +
+               "VALUES (?, ?, ?, 0, 0, 'Bronze')";
 
-        javax.swing.JOptionPane.showMessageDialog(
-            this,
-            "Pelanggan berhasil ditambahkan!",
-            "Sukses",
-            javax.swing.JOptionPane.INFORMATION_MESSAGE
-        );
+           PreparedStatement ps = conn.prepareStatement(sql);
+           ps.setString(1, kode);
+           ps.setString(2, nama);
+           ps.setString(3, noHp);
+           ps.executeUpdate();
 
-        dispose();
+           javax.swing.JOptionPane.showMessageDialog(
+               this,
+               "Pelanggan berhasil ditambahkan!",
+               "Sukses",
+               javax.swing.JOptionPane.INFORMATION_MESSAGE
+           );
 
-    } catch (SQLException e) {
-        javax.swing.JOptionPane.showMessageDialog(
-            this,
-            "Gagal menyimpan: " + e.getMessage(),
-            "Error",
-            javax.swing.JOptionPane.ERROR_MESSAGE
-        );
-    }
+           dispose();
+
+       } catch (SQLException e) {
+           javax.swing.JOptionPane.showMessageDialog(
+               this,
+               "Gagal menyimpan: " + e.getMessage(),
+               "Error",
+               javax.swing.JOptionPane.ERROR_MESSAGE
+           );
+       }
 
     }//GEN-LAST:event_btnSimpanActionPerformed
 

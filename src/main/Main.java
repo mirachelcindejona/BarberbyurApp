@@ -1,4 +1,4 @@
-/*
+    /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
@@ -12,6 +12,7 @@ import form.Kapster;
 import form.Pelanggan;
 import form.Riwayat_Transaksi;
 import javax.swing.JComponent;
+import javax.swing.ImageIcon;
 
 
 /**
@@ -35,6 +36,10 @@ public class Main extends javax.swing.JFrame {
     
     public Main() {
         initComponents();
+        
+        ImageIcon icon = new ImageIcon(getClass().getResource("/icon/logo.png"));
+        this.setIconImage(icon.getImage());
+        
         form1 = new Dashboard();
         form2 = new Kasir();
         form3 = new Layanan();

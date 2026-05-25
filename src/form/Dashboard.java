@@ -33,6 +33,9 @@ public class Dashboard extends javax.swing.JPanel {
     /**
      * Creates new form Dashboard
      */
+    
+    private javax.swing.Timer autoRefresh;
+    
     public Dashboard() {
         initComponents();
         
@@ -111,7 +114,13 @@ public class Dashboard extends javax.swing.JPanel {
         tableTransaksi.getTableHeader().setPreferredSize(new java.awt.Dimension(0, 40));
 
         loadDashboard();
+        autoRefresh = new javax.swing.Timer(2000, e -> refreshDashboard());
+        autoRefresh.start();
     
+    }
+    
+    public void refreshDashboard() {
+        loadDashboard();
     }
     
     private JPanel createKapsterItem(

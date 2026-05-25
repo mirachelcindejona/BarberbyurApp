@@ -24,9 +24,7 @@ public class Pelanggan extends javax.swing.JPanel {
      * Creates new form Pelanggan
      */
     public Pelanggan() {
-        initComponents();setBorder(
-                javax.swing.BorderFactory.createEmptyBorder(0, 0, 40, 40)
-        );
+        initComponents();
         
         setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 40, 40));
         
@@ -155,6 +153,8 @@ public class Pelanggan extends javax.swing.JPanel {
         //fix width kolom
         tablePelanggan.getTableHeader().setResizingAllowed(false);
         tablePelanggan.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        tablePelanggan.getColumnModel().getColumn(6).setMinWidth(200);
+        tablePelanggan.getColumnModel().getColumn(6).setPreferredWidth(200);
         
         //tier dan aksi
         tablePelanggan.getColumnModel()

@@ -2,8 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package form;
+package dialog;
 
+import form.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -18,9 +19,11 @@ import java.util.Date;
  *
  * @author asus_
  */
-public class Proses_Pembayaran extends javax.swing.JFrame {
-    
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Proses_Pembayaran.class.getName());
+    public class Struk extends javax.swing.JFrame {
+
+    private static final java.util.logging.Logger logger =
+        java.util.logging.Logger.getLogger(Struk.class.getName());
+
     private List<model.CartItemModel> cartData;
     private int idMember;
     private int totalBayar;
@@ -31,156 +34,143 @@ public class Proses_Pembayaran extends javax.swing.JFrame {
     private String namaKapster;
     private Kasir formKasirAsal;
     private String noNota;
-    private int poinAwalDB;
 
-    /**
-     * Creates new form Proses_Pembayaran
-     */
-    public Proses_Pembayaran(List<model.CartItemModel> cart, int idMember, String namaPelanggan, 
-                             String kapster, int subtotal, int diskon, int total, 
-                             String metode, int poinAwal, int poin, Kasir kasirAsal) {
+    public Struk(List<model.CartItemModel> cart, int idMember, String namaPelanggan,
+                 String kapster, int subtotal, int diskon, int total,
+                 String metode, int poin, Kasir kasirAsal, String tanggalTransaksi) {
+
         initComponents();
-        this.poinAwalDB = poinAwal;
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        
-        this.cartData = cart;
-        this.idMember = idMember;
-        this.totalBayar = total;
-        this.diskonDB = diskon;
-        this.subtotalDB = subtotal;
-        this.poinDidapat = idMember == 0 ? 0 : poin; // Poin hanya untuk member terdaftar
-        this.namaKapster = kapster;
-        this.formKasirAsal = kasirAsal;
-        
-        // Mapping Metode Pembayaran ke ENUM Database yang baru
-        if (metode.equals("Tunai")) {
-            this.metodeDb = "cash";
-        } else if (metode.equals("QRIS")) {
-            this.metodeDb = "qris";
-        } else if (metode.equals("Debit")) {
-            this.metodeDb = "debit";
-        } else if (metode.equals("Transfer")) {
-            this.metodeDb = "transfer";
-        } else {
-            this.metodeDb = "cash"; // Fallback/Default
-        }
-        
-        this.noNota = generateNoNota(); // Generate nomor nota saat form dibuka
 
-        populateDataStruk(namaPelanggan, kapster, subtotal, diskon, total, metode);
+        this.cartData      = cart;
+        this.idMember      = idMember;
+        this.totalBayar    = total;
+        this.diskonDB      = diskon;
+        this.subtotalDB    = subtotal;
+        this.poinDidapat   = idMember == 0 ? 0 : poin;
+        this.namaKapster   = kapster;
+        this.formKasirAsal = kasirAsal;
+
+        // Mapping metode ke ENUM DB
+        switch (metode) {
+            case "Tunai":    this.metodeDb = "cash";     break;
+            case "QRIS":     this.metodeDb = "qris";     break;
+            case "Debit":    this.metodeDb = "debit";    break;
+            case "Transfer": this.metodeDb = "transfer"; break;
+            default:         this.metodeDb = "cash";     break;
+        }
+
+        this.noNota = generateNoNota();
+
+        populateDataStruk(namaPelanggan, kapster, subtotal, diskon, total, metode, tanggalTransaksi);
     }
 
-    private void populateDataStruk(String pelanggan, String kapster, int subtotal, int diskon, int total, String metode) {
-        lblWaktuTransaksi.setText(new SimpleDateFormat("dd MMM yyyy, HH.mm").format(new Date()));
+    private void populateDataStruk(String pelanggan, String kapster,
+            int subtotal, int diskon, int total, String metode,
+            String tanggalTransaksi) {
+
+        // Format tanggal dari DB — bukan new Date()
+        try {
+            Date tgl = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(tanggalTransaksi);
+            lblWaktuTransaksi.setText(
+                new SimpleDateFormat("dd MMM yyyy, HH.mm").format(tgl)
+            );
+        } catch (Exception ex) {
+            lblWaktuTransaksi.setText(tanggalTransaksi);
+        }
+
         lblNomorNota.setText("No. " + this.noNota);
         lblNamaPelanggan.setText(pelanggan);
         lblNamaKapster.setText(kapster);
-        
+
         lblHargaSubtotal.setText("Rp " + String.format("%,d", subtotal).replace(',', '.'));
         lblHargaSubtotal1.setText("- Rp " + String.format("%,d", diskon).replace(',', '.'));
         lblHargaSubtotal2.setText("Rp " + String.format("%,d", total).replace(',', '.'));
         lblMetodeBayar.setText(metode);
-        
+
+        // Tampilan poin
         if (idMember == 0) {
             lblPoinDidapat.setText("+0 poin (Bukan Member)");
             lblPoinDidapat.setForeground(new java.awt.Color(204, 204, 204));
         } else {
             lblPoinDidapat.setText("+" + poinDidapat + " poin");
+            lblPoinDidapat.setForeground(new java.awt.Color(255, 204, 0));
         }
 
-        // Loop Rendering List Item pada Struk
+        // Render list item di struk
         PanelItem.setLayout(new javax.swing.BoxLayout(PanelItem, javax.swing.BoxLayout.Y_AXIS));
         PanelItem.removeAll();
-        
+
         for (model.CartItemModel c : cartData) {
-            // Container utama per item (kiri-kanan)
             javax.swing.JPanel baris = new javax.swing.JPanel(new java.awt.BorderLayout());
             baris.setBackground(java.awt.Color.WHITE);
-            
-            // Container kiri untuk Nama Item (atas) dan Detail Qty (bawah)
+
             javax.swing.JPanel panelKiri = new javax.swing.JPanel();
             panelKiri.setLayout(new javax.swing.BoxLayout(panelKiri, javax.swing.BoxLayout.Y_AXIS));
             panelKiri.setBackground(java.awt.Color.WHITE);
-            
-            // Label Nama Item (Dibuat agak tebal/Bold)
+
+            // Nama item
             javax.swing.JLabel lNama = new javax.swing.JLabel(c.produk.nama);
             lNama.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 13));
-            
-            // Label Harga Satuan x Qty (Warna abu-abu/Muted)
+
+            // Harga satuan x qty
             String formatSatuan = String.format("%,d", c.produk.harga).replace(',', '.');
-            javax.swing.JLabel lDetail = new javax.swing.JLabel("Rp " + formatSatuan + "  x  " + c.qty);
+            javax.swing.JLabel lDetail = new javax.swing.JLabel(
+                "Rp " + formatSatuan + "  x  " + c.qty
+            );
             lDetail.setFont(new java.awt.Font("Segoe UI", java.awt.Font.PLAIN, 12));
-            lDetail.setForeground(new java.awt.Color(102, 102, 102)); // Warna abu-abu
-            
-            // Masukkan nama dan detail ke panel kiri
+            lDetail.setForeground(new java.awt.Color(102, 102, 102));
+
             panelKiri.add(lNama);
             panelKiri.add(lDetail);
-            
-            // 3. Label Harga Total dari Item tersebut (Kanan)
+
+            // Total harga per item
             String formatTotalItem = String.format("%,d", c.produk.harga * c.qty).replace(',', '.');
             javax.swing.JLabel lHargaTotal = new javax.swing.JLabel("Rp " + formatTotalItem);
             lHargaTotal.setFont(new java.awt.Font("Segoe UI", java.awt.Font.PLAIN, 13));
-            
-            // Gabungkan panel kiri dan label harga total ke container utama
+
             baris.add(panelKiri, java.awt.BorderLayout.CENTER);
             baris.add(lHargaTotal, java.awt.BorderLayout.EAST);
-            
-            // Masukkan ke area Item di struk
+
             PanelItem.add(baris);
-            
-            // Gap antar item di dalam struk
-            PanelItem.add(javax.swing.Box.createRigidArea(new java.awt.Dimension(0, 10))); 
+            PanelItem.add(javax.swing.Box.createRigidArea(new java.awt.Dimension(0, 10)));
         }
-        
+
         PanelItem.revalidate();
         PanelItem.repaint();
-        
-        // Kemas ulang (pack) frame agar tingginya memanjang pas mengikuti isi struk saat ini
+
+        // Pack frame mengikuti isi struk
         this.pack();
 
-        // Ambil ukuran resolusi layar monitor perangkat yang sedang digunakan
         java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-        
-        // Tentukan batas tinggi maksimal frame (dikurangi 100px agar tidak tertutup Taskbar Windows)
         int maxHeight = screenSize.height - 100;
-        
-        // Jika setelah di-pack ternyata tinggi frame melebihi tinggi maksimal layar:
         if (this.getHeight() > maxHeight) {
-            // Batasi tinggi frame ke maxHeight. 
-            // Karena dibatasi, JScrollPane otomatis akan memunculkan Scrollbar.
             this.setSize(this.getWidth(), maxHeight);
         }
-        
-        // posisikan kembali frame persis di tengah layar
+
         this.setLocationRelativeTo(null);
-        
-        // (Opsional tapi penting) Mempercepat laju scroll pada mouse, karena default Swing sangat lambat
         jScrollPane3.getVerticalScrollBar().setUnitIncrement(16);
     }
-    
+
     private String generateNoNota() {
         String prefix = "INV-" + new java.text.SimpleDateFormat("yyyyMMdd").format(new java.util.Date()) + "-";
-        String noUrut = "001"; // Default jika belum ada transaksi hari ini
-        
+        String noUrut = "001";
+
         try {
-            java.sql.Connection conn = Koneksi.getKoneksi(); // Sesuaikan dengan class koneksimu
-            // Hitung jumlah transaksi pada hari ini
+            java.sql.Connection conn = Koneksi.getKoneksi();
             String sql = "SELECT COUNT(*) AS total FROM transaksi WHERE DATE(tanggal) = CURDATE()";
             java.sql.Statement st = conn.createStatement();
             java.sql.ResultSet rs = st.executeQuery(sql);
-            
             if (rs.next()) {
                 int urutanBerikutnya = rs.getInt("total") + 1;
-                // Format angka menjadi 3 digit (contoh: 1 menjadi 001, 15 menjadi 015)
-                noUrut = String.format("%03d", urutanBerikutnya); 
+                noUrut = String.format("%03d", urutanBerikutnya);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            // Fallback (cadangan) jika database error, gunakan 3 digit acak dari waktu
             noUrut = String.format("%03d", (System.currentTimeMillis() % 1000));
         }
-        
+
         return prefix + noUrut;
     }
 
@@ -198,9 +188,6 @@ public class Proses_Pembayaran extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         jList2 = new javax.swing.JList<>();
         jPanel1 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        jSeparator1 = new javax.swing.JSeparator();
-        btnKonfirmasiPembayaran = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         jPanel2 = new javax.swing.JPanel();
@@ -255,15 +242,6 @@ public class Proses_Pembayaran extends javax.swing.JFrame {
 
         jPanel1.setBackground(new java.awt.Color(10, 10, 11));
         jPanel1.setPreferredSize(new java.awt.Dimension(435, 573));
-
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setText("Proses Pembayaran");
-
-        btnKonfirmasiPembayaran.setBackground(new java.awt.Color(201, 168, 76));
-        btnKonfirmasiPembayaran.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btnKonfirmasiPembayaran.setText("Konfirmasi Pembayaran");
-        btnKonfirmasiPembayaran.addActionListener(this::btnKonfirmasiPembayaranActionPerformed);
 
         jPanel3.setLayout(new java.awt.BorderLayout());
 
@@ -503,7 +481,7 @@ public class Proses_Pembayaran extends javax.swing.JFrame {
                 .addComponent(txtTerimakasih)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtPowered)
-                .addContainerGap(27, Short.MAX_VALUE))
+                .addContainerGap(165, Short.MAX_VALUE))
         );
 
         jScrollPane3.setViewportView(jPanel2);
@@ -514,30 +492,17 @@ public class Proses_Pembayaran extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSeparator1)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGap(16, 16, 16)
-                .addComponent(jLabel1)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGap(21, 21, 21)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnKonfirmasiPembayaran))
-                .addGap(22, 22, 22))
+                .addGap(0, 0, 0)
+                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, 435, Short.MAX_VALUE)
+                .addGap(0, 0, 0))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(14, 14, 14)
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(0, 0, 0)
                 .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
-                .addComponent(btnKonfirmasiPembayaran, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(22, 22, 22))
+                .addGap(0, 0, 0))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -556,122 +521,9 @@ public class Proses_Pembayaran extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnKonfirmasiPembayaranActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnKonfirmasiPembayaranActionPerformed
-        // TODO add your handling code here:
-        try {
-            Connection conn = Koneksi.getKoneksi();
-            conn.setAutoCommit(false);
-            
-            // Ambil ID & Komisi Kapster
-            int idKapsterDB = 0;
-            int persenKomisi = 0;
-            if (!namaKapster.equals("Tanpa Kapster")) {
-                
-                PreparedStatement psK = conn.prepareStatement(
-                    "SELECT id, komisi FROM kapster WHERE nama = ?"
-                );
-                psK.setString(1, namaKapster);
-                ResultSet rsK = psK.executeQuery();
-
-                if (rsK.next()) {
-                    idKapsterDB = rsK.getInt("id");
-                    persenKomisi = rsK.getInt("komisi");
-                }
-
-                rsK.close();
-                psK.close();
-            }
-            
-            // Hitung komisi kapster (Misal: Persentase komisi dari Total Bayar)
-            int nominalKomisi = (totalBayar * persenKomisi) / 100;
-
-            // Insert ke Tabel Transaksi
-            String sqlTrans = "INSERT INTO transaksi (nomor_nota, id_pelanggan, id_kapster, subtotal, diskon, total, komisi, metode_pembayaran, tanggal) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())";
-            PreparedStatement psTrans = conn.prepareStatement(sqlTrans, Statement.RETURN_GENERATED_KEYS);
-            psTrans.setString(1, this.noNota);
-            
-            if (idMember == 0) psTrans.setNull(2, java.sql.Types.INTEGER);
-            else psTrans.setInt(2, idMember);
-            
-            if (idKapsterDB == 0) psTrans.setNull(3, java.sql.Types.INTEGER);
-            else psTrans.setInt(3, idKapsterDB);
-            
-            psTrans.setInt(4, subtotalDB);
-            psTrans.setInt(5, diskonDB);
-            psTrans.setInt(6, totalBayar);
-            psTrans.setInt(7, nominalKomisi);
-            psTrans.setString(8, metodeDb);
-            
-            psTrans.executeUpdate();
-            
-            // Ambil id_transaksi yang baru saja terbuat
-            ResultSet rsTrans = psTrans.getGeneratedKeys();
-            int idTransaksiBaru = 0;
-            if (rsTrans.next()) idTransaksiBaru = rsTrans.getInt(1);
-
-            // Insert ke Tabel Detail Transaksi & Kurangi Durasi/Stok Produk
-            String sqlDetail = "INSERT INTO detail_transaksi (id_transaksi, id_item, jumlah, harga_saat_ini) VALUES (?, ?, ?, ?)";
-            PreparedStatement psDetail = conn.prepareStatement(sqlDetail);
-            
-            String sqlStok = "UPDATE item SET status = CASE WHEN (stok - ?) <= 0 THEN 'non-aktif' ELSE status END, stok = stok - ? WHERE id = ? AND tipe = 'product'";
-            PreparedStatement psUpdateStok = conn.prepareStatement(sqlStok);
-
-            for (model.CartItemModel c : cartData) {
-                psDetail.setInt(1, idTransaksiBaru);
-                psDetail.setInt(2, c.produk.id);
-                psDetail.setInt(3, c.qty);
-                psDetail.setInt(4, c.produk.harga);
-                psDetail.addBatch();
-                
-                // Kurangi stok jika item adalah product
-                if (c.produk.tipe.equalsIgnoreCase("product")) {
-                    psUpdateStok.setInt(1, c.qty);       // Tanda tanya pertama (untuk cek case when)
-                    psUpdateStok.setInt(2, c.qty);       // Tanda tanya kedua (untuk pengurangan stok)
-                    psUpdateStok.setInt(3, c.produk.id); // Tanda tanya ketiga (untuk id)
-                    psUpdateStok.addBatch();
-                }
-            }
-            psDetail.executeBatch();
-            psUpdateStok.executeBatch();
-
-            // Update Poin Pelanggan (Jika Member)
-            if (idMember != 0 && poinDidapat > 0) {
-                int poinBaru = poinAwalDB + poinDidapat;
-                String tierBaru = "Bronze";
-                
-                // Kalkulasi Tier Baru berdasarkan Total Poin Akhir
-                if (poinBaru >= 1000) {
-                    tierBaru = "Gold";
-                } else if (poinBaru >= 400) {
-                    tierBaru = "Silver";
-                }
-                
-                PreparedStatement psPoin = conn.prepareStatement("UPDATE pelanggan SET point = ?, tier = ? WHERE id = ?");
-                psPoin.setInt(1, poinBaru);
-                psPoin.setString(2, tierBaru);
-                psPoin.setInt(3, idMember);
-                psPoin.executeUpdate();
-            }
-
-            conn.commit(); // Eksekusi semua secara permanen
-            
-            // Update pesan sukses agar menampilkan nomor yang benar
-            JOptionPane.showMessageDialog(this, "Transaksi Berhasil!\nNomor Nota: " + this.noNota);
-            formKasirAsal.kosongkanKeranjang();
-            
-            this.dispose();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Terjadi kesalahan saat menyimpan transaksi!\n" + e.getMessage());
-        }
-    }//GEN-LAST:event_btnKonfirmasiPembayaranActionPerformed
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel PanelItem;
-    private javax.swing.JButton btnKonfirmasiPembayaran;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JList<String> jList1;
     private javax.swing.JList<String> jList2;
     private javax.swing.JPanel jPanel1;
@@ -680,7 +532,6 @@ public class Proses_Pembayaran extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
     private javax.swing.JSeparator jSeparator4;
