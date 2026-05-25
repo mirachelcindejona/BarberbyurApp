@@ -4,6 +4,8 @@
  */
 package form;
 
+import dialog.Proses_Pembayaran;
+import dialog.Pilih_Member;
 import model.Item;
 import model.CartItemModel;
 import java.util.ArrayList;
@@ -52,12 +54,10 @@ public class Kasir extends javax.swing.JPanel {
         panelMemberInfo.setVisible(false);
         jScrollPane1.getViewport().setBackground(new java.awt.Color(22, 22, 26));
 
-        // Hapus border putih/abu-abu bawaan Scroll Pane agar lebih bersih
         jScrollPane1.setBorder(javax.swing.BorderFactory.createEmptyBorder());
         
         jScrollPane2.getViewport().setBackground(new java.awt.Color(10, 10, 11));
 
-        // Hapus border putih/abu-abu bawaan Scroll Pane agar lebih bersih
         jScrollPane2.setBorder(javax.swing.BorderFactory.createEmptyBorder());
         
         terapkanGayaTombolBayar(btnTunai);
@@ -72,11 +72,8 @@ public class Kasir extends javax.swing.JPanel {
         terapkanGayaTombolBayar(btnCatService);
         terapkanGayaTombolBayar(btnCatProduct);
         
-        btnCatAll.setSelected(true);    // Mengeset nilai awal Rp 0
-        
         btnCatAll.setSelected(true);
 
-        // SETTING KEDIP GARIS (CARET) EMAS DI SEARCH BAR
         txtSearch.setCaretColor(new java.awt.Color(201, 168, 76));
 
         // SETTING PLACEHOLDER MURNI UNTUK TXTSEARCH
@@ -298,7 +295,7 @@ public class Kasir extends javax.swing.JPanel {
                 model.CartItemModel cartData = listKeranjang.get(i);
                 final int index = i;
                 
-                // Panggil class CartItem milikmu
+                // Panggil class CartItem
                 swing.CartItem itemCart = new swing.CartItem();
                 
                 // Masukkan data ke fungsi setData yang baru dibuat
@@ -385,7 +382,6 @@ public class Kasir extends javax.swing.JPanel {
         renderKeranjang();
     }
 
-    // KALKULASI TOTAL HARGA & QTY MENGGUNAKAN LABEL KAMU
     private void updateTotalHarga() {
         int subtotal = 0;
         int totalQty = 0;
@@ -411,7 +407,6 @@ public class Kasir extends javax.swing.JPanel {
         qtyTotalItemDikeranjang.setText(String.valueOf(totalQty));
     }
     
-    // METHOD UNTUK MENGISI JCOMBOBOX KAPSTER DARI DATABASE
     private void loadKapsterToCombo() {
         // Bersihkan item bawaan NetBeans dahulu
         PilihKapster.removeAllItems();
@@ -423,7 +418,7 @@ public class Kasir extends javax.swing.JPanel {
             java.sql.Connection conn = Koneksi.getKoneksi();
             java.sql.Statement st = conn.createStatement();
             
-            // Mengambil nama kapster yang statusnya aktif berdasarkan database SQL kamu
+            // Mengambil nama kapster yang statusnya aktif berdasarkan database SQL
             java.sql.ResultSet rs = st.executeQuery("SELECT nama, komisi_persen FROM kapster WHERE LOWER(status) = 'aktif'");
             
             while (rs.next()) {

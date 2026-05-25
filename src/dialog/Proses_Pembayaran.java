@@ -2,8 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package form;
+package dialog;
 
+import form.Kasir;
+import form.Koneksi;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -136,16 +138,12 @@ public class Proses_Pembayaran extends javax.swing.JFrame {
         PanelItem.revalidate();
         PanelItem.repaint();
         
-        // Kemas ulang (pack) frame agar tingginya memanjang pas mengikuti isi struk saat ini
         this.pack();
 
-        // Ambil ukuran resolusi layar monitor perangkat yang sedang digunakan
         java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
         
-        // Tentukan batas tinggi maksimal frame (dikurangi 100px agar tidak tertutup Taskbar Windows)
         int maxHeight = screenSize.height - 100;
         
-        // Jika setelah di-pack ternyata tinggi frame melebihi tinggi maksimal layar:
         if (this.getHeight() > maxHeight) {
             // Batasi tinggi frame ke maxHeight. 
             // Karena dibatasi, JScrollPane otomatis akan memunculkan Scrollbar.
@@ -155,7 +153,6 @@ public class Proses_Pembayaran extends javax.swing.JFrame {
         // posisikan kembali frame persis di tengah layar
         this.setLocationRelativeTo(null);
         
-        // (Opsional tapi penting) Mempercepat laju scroll pada mouse, karena default Swing sangat lambat
         jScrollPane3.getVerticalScrollBar().setUnitIncrement(16);
     }
     
@@ -164,7 +161,7 @@ public class Proses_Pembayaran extends javax.swing.JFrame {
         String noUrut = "001"; // Default jika belum ada transaksi hari ini
         
         try {
-            java.sql.Connection conn = Koneksi.getKoneksi(); // Sesuaikan dengan class koneksimu
+            java.sql.Connection conn = Koneksi.getKoneksi();
             // Hitung jumlah transaksi pada hari ini
             String sql = "SELECT COUNT(*) AS total FROM transaksi WHERE DATE(tanggal) = CURDATE()";
             java.sql.Statement st = conn.createStatement();

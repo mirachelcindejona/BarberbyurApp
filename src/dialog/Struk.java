@@ -238,7 +238,7 @@ import java.util.Date;
         jScrollPane2.setViewportView(jList2);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Proses Pembayaran");
+        setTitle("Struk Transaksi");
 
         jPanel1.setBackground(new java.awt.Color(10, 10, 11));
         jPanel1.setPreferredSize(new java.awt.Dimension(435, 573));
