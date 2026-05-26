@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package dialog;
+package form;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -10,8 +10,6 @@ import java.sql.Statement;
 import java.sql.PreparedStatement;
 import javax.swing.BoxLayout;
 import form.Kasir;
-import form.Kasir;
-import form.Koneksi;
 import model.Pelanggan;
 
 /**
