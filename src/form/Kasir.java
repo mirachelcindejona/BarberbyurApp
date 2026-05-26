@@ -25,6 +25,21 @@ public class Kasir extends javax.swing.JPanel {
     private int poinMemberTerpilih = 0;
     private String tierMemberTerpilih = "Bronze";
     
+    private static Kasir instance;
+
+    public static Kasir getInstance() {
+        return instance;
+    }
+
+    // ✅ Static method — dipanggil dari form manapun, 1 baris saja
+    public static void refreshKapster() {
+        if (instance != null) instance.loadKapsterToCombo();
+    }
+
+    public static void refreshItem() {
+        if (instance != null) instance.jalankanFilter();
+    }
+    
     private void terapkanGayaTombolBayar(javax.swing.JToggleButton btn) {
         java.awt.Color bgAktif = new java.awt.Color(201, 168, 76);
         java.awt.Color fgAktif = new java.awt.Color(0, 0, 0);
@@ -48,6 +63,7 @@ public class Kasir extends javax.swing.JPanel {
     
     public Kasir() {
         initComponents();
+        instance = this;
         
         panelMemberInfo.setVisible(false);
         jScrollPane1.getViewport().setBackground(new java.awt.Color(22, 22, 26));
@@ -174,7 +190,7 @@ public class Kasir extends javax.swing.JPanel {
         });
     }
     
-    private void jalankanFilter() {
+    public void jalankanFilter() {
         String keyword = txtSearch.getText();
         String filterTipe = "Semua";
 
@@ -190,7 +206,7 @@ public class Kasir extends javax.swing.JPanel {
     }
     
     // METHOD UNTUK LOAD DATABASE KE JSCROLLPANE KIRI
-    private void loadItemKeKatalog(String keyword, String filterTipe) {
+    public void loadItemKeKatalog(String keyword, String filterTipe) {
         panelGridItem.setLayout(new java.awt.GridLayout(0, 3, 10, 10)); 
         panelGridItem.removeAll(); 
 
@@ -412,25 +428,37 @@ public class Kasir extends javax.swing.JPanel {
     }
     
     // METHOD UNTUK MENGISI JCOMBOBOX KAPSTER DARI DATABASE
-    private void loadKapsterToCombo() {
-        // Bersihkan item bawaan NetBeans dahulu
+    public void loadKapsterToCombo() {
+        
         PilihKapster.removeAllItems();
-        
-        // Tambahkan pilihan default di baris pertama
         PilihKapster.addItem("-- Pilih Kapster --");
-        
+
         try {
             java.sql.Connection conn = Koneksi.getKoneksi();
-            java.sql.Statement st = conn.createStatement();
-            
-            // Mengambil nama kapster yang statusnya aktif berdasarkan database SQL kamu
-            java.sql.ResultSet rs = st.executeQuery("SELECT nama, komisi_persen FROM kapster WHERE LOWER(status) = 'aktif'");
-            
+
+            String sql = "SELECT nama, komisi_persen FROM kapster WHERE LOWER(status) = 'aktif'";
+            java.sql.PreparedStatement ps = conn.prepareStatement(sql);
+            java.sql.ResultSet rs = ps.executeQuery();
+
             while (rs.next()) {
-                PilihKapster.addItem(rs.getString("nama") + " (" + rs.getInt("komisi_persen") + "%)");
+                String nama = rs.getString("nama");
+                int komisi = rs.getInt("komisi_persen");
+
+                PilihKapster.addItem(nama + " (" + komisi + "%)");
             }
+
+            rs.close();
+            ps.close();
+
+            // IMPORTANT: paksa refresh UI
+            PilihKapster.revalidate();
+            PilihKapster.repaint();
+
         } catch (Exception e) {
             e.printStackTrace();
+            javax.swing.JOptionPane.showMessageDialog(this,
+                "Gagal load kapster: " + e.getMessage()
+            );
         }
     }
     

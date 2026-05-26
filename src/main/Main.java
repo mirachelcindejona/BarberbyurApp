@@ -39,6 +39,7 @@ public class Main extends javax.swing.JFrame {
         
         ImageIcon icon = new ImageIcon(getClass().getResource("/icon/logo.png"));
         this.setIconImage(icon.getImage());
+        this.setTitle("BarberByur");
         
         form1 = new Dashboard();
         form2 = new Kasir();

@@ -12,6 +12,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import form.Koneksi;
+import form.Kasir;
 /**
  *
  * @author rhmnsae
@@ -379,12 +380,12 @@ public class TambahItemDialog extends javax.swing.JDialog {
             statusDB = "non aktif";
         }
 
-        String durasi = "-";
+        int durasi = 0;
         int stok = 0;
 
         if (tipeDB.equals("service")) {
 
-            durasi = inputDurasiStok + " menit";
+            durasi = Integer.parseInt(inputDurasiStok);
 
         } else {
 
@@ -407,7 +408,7 @@ public class TambahItemDialog extends javax.swing.JDialog {
             ps.setString(1, nama);
             ps.setString(2, tipeDB);
             ps.setInt(3, Integer.parseInt(harga));
-            ps.setString(4, durasi);
+            ps.setInt(4, durasi);
             ps.setString(5, deskripsi);
             ps.setInt(6, stok);
             ps.setString(7, statusDB);
@@ -420,6 +421,7 @@ public class TambahItemDialog extends javax.swing.JDialog {
             );
 
             dispose();
+            Kasir.refreshItem();
 
         } catch (SQLException e) {
 

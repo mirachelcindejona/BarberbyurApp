@@ -29,16 +29,6 @@ public class Kapster extends javax.swing.JPanel {
     public Kapster() {
         initComponents();
         Connection conn = Koneksi.getKoneksi();
-        
-//        PreparedStatement ps3 = conn.prepareStatement(
-//            "SELECT COUNT(*) as total FROM kapster"
-//        );
-//        ResultSet rs3 = ps3.executeQuery();
-//        if (rs3.next()) {
-//            totalKaps.setText(String.valueOf(rs3.getInt("totalKaps")));
-//        }
-//        rs3.close();
-//        ps3.close();
 
         setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 40, 40));
 

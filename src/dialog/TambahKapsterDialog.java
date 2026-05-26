@@ -12,6 +12,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import form.Koneksi;
+import form.Kasir;
 /**
  *
  * @author rhmnsae
@@ -374,6 +375,7 @@ public class TambahKapsterDialog extends javax.swing.JDialog {
 
             JOptionPane.showMessageDialog(this, "Kapster berhasil ditambahkan!");
             dispose();
+            Kasir.refreshKapster();
 
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Gagal menyimpan: " + e.getMessage());
