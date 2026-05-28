@@ -13,6 +13,7 @@ import javax.swing.JOptionPane;
 import java.awt.BorderLayout;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import form.Riwayat_Transaksi;
 
 /**
  *
@@ -568,14 +569,14 @@ public class Proses_Pembayaran extends javax.swing.JFrame {
             if (!namaKapster.equals("Tanpa Kapster")) {
                 
                 PreparedStatement psK = conn.prepareStatement(
-                    "SELECT id, komisi FROM kapster WHERE nama = ?"
+                    "SELECT id, komisi_persen FROM kapster WHERE nama = ?"
                 );
                 psK.setString(1, namaKapster);
                 ResultSet rsK = psK.executeQuery();
 
                 if (rsK.next()) {
                     idKapsterDB = rsK.getInt("id");
-                    persenKomisi = rsK.getInt("komisi");
+                    persenKomisi = rsK.getInt("komisi_persen");
                 }
 
                 rsK.close();
@@ -658,8 +659,10 @@ public class Proses_Pembayaran extends javax.swing.JFrame {
             // Update pesan sukses agar menampilkan nomor yang benar
             JOptionPane.showMessageDialog(this, "Transaksi Berhasil!\nNomor Nota: " + this.noNota);
             formKasirAsal.kosongkanKeranjang();
+            Riwayat_Transaksi.refresh();
+            Kasir.refreshItem(); 
             
-            this.dispose();
+            dispose();
 
         } catch (Exception e) {
             e.printStackTrace();
