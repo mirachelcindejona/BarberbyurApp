@@ -17,6 +17,17 @@ import javax.swing.table.DefaultTableModel;
  * @author rhmnsae
  */
 public class Riwayat_Transaksi extends javax.swing.JPanel {
+    private static Riwayat_Transaksi instance;
+    
+    public static void refresh() {
+        if (instance != null) {
+            javax.swing.SwingUtilities.invokeLater(() -> instance.refreshTable());
+        }
+    }
+
+    public void refreshTable() {
+        loadData(txtSearch.getText().trim());
+    }
 
     /**
      * Creates new form Riwayat_Transaksi
@@ -24,6 +35,7 @@ public class Riwayat_Transaksi extends javax.swing.JPanel {
     public Riwayat_Transaksi() {
 
             initComponents();
+            instance = this;
             setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 40, 40));
 
             tableContainer.setBackground(ThemeColor.SURFACE);
@@ -221,9 +233,6 @@ public class Riwayat_Transaksi extends javax.swing.JPanel {
             }
         }
 
-        public void refreshTable() {
-            loadData(txtSearch.getText().trim());
-        }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
