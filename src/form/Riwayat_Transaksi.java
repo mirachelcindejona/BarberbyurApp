@@ -247,6 +247,7 @@ public class Riwayat_Transaksi extends javax.swing.JPanel {
         tableContainer = new component.RoundedPanel();
         scrollTransaksi = new javax.swing.JScrollPane();
         tableTransaksi = new component.ModernTable();
+        btnExportExcel = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(10, 10, 11));
 
@@ -284,6 +285,11 @@ public class Riwayat_Transaksi extends javax.swing.JPanel {
                     .addGap(0, 0, 0)))
         );
 
+        btnExportExcel.setBackground(new java.awt.Color(201, 168, 76));
+        btnExportExcel.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnExportExcel.setText("Export to Excel");
+        btnExportExcel.addActionListener(this::btnExportExcelActionPerformed);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -296,7 +302,9 @@ public class Riwayat_Transaksi extends javax.swing.JPanel {
                         .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(27, 27, 27)
                         .addComponent(totalTransaksi)
-                        .addGap(0, 652, Short.MAX_VALUE))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 503, Short.MAX_VALUE)
+                        .addComponent(btnExportExcel)
+                        .addGap(22, 22, 22))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -304,7 +312,8 @@ public class Riwayat_Transaksi extends javax.swing.JPanel {
                 .addGap(40, 40, 40)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(totalTransaksi))
+                    .addComponent(totalTransaksi)
+                    .addComponent(btnExportExcel, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(tableContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -314,8 +323,14 @@ public class Riwayat_Transaksi extends javax.swing.JPanel {
         
     }//GEN-LAST:event_txtSearchActionPerformed
 
+    private void btnExportExcelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportExcelActionPerformed
+        DialogExport dialog = new DialogExport();
+        dialog.setVisible(true);
+    }//GEN-LAST:event_btnExportExcelActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnExportExcel;
     private javax.swing.JScrollPane scrollTransaksi;
     private component.RoundedPanel tableContainer;
     private component.ModernTable tableTransaksi;
