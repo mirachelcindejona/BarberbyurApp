@@ -656,12 +656,17 @@ public class Proses_Pembayaran extends javax.swing.JFrame {
 
             conn.commit(); // Eksekusi semua secara permanen
             
-            // Update pesan sukses agar menampilkan nomor yang benar
-            JOptionPane.showMessageDialog(this, "Transaksi Berhasil!\nNomor Nota: " + this.noNota);
+            int pilihan = JOptionPane.showConfirmDialog(this, "Transaksi Berhasil!\nNomor Nota: " + this.noNota + "\n\nApakah Anda ingin mencetak struk?", "Sukses", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
+            
+            if (pilihan == JOptionPane.YES_OPTION) {
+                String tgl = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date());
+                dialog.Struk formStruk = new dialog.Struk(cartData, idMember, lblNamaPelanggan.getText(), namaKapster, subtotalDB, diskonDB, totalBayar, lblMetodeBayar.getText(), poinDidapat, formKasirAsal, tgl);
+                formStruk.setVisible(true);
+            }
+            
             formKasirAsal.kosongkanKeranjang();
             Riwayat_Transaksi.refresh();
             Kasir.refreshItem(); 
-            
             dispose();
 
         } catch (Exception e) {

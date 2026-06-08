@@ -64,6 +64,8 @@ import java.util.Date;
         this.noNota = generateNoNota();
 
         populateDataStruk(namaPelanggan, kapster, subtotal, diskon, total, metode, tanggalTransaksi);
+        
+        tambahkanTombolAksi();
     }
 
     private void populateDataStruk(String pelanggan, String kapster,
@@ -172,6 +174,168 @@ import java.util.Date;
         }
 
         return prefix + noUrut;
+    }
+
+    public Struk(int idTransaksi) {
+        initComponents();
+        this.setLocationRelativeTo(null);
+        this.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+
+        try {
+            Connection conn = Koneksi.getKoneksi();
+            // Ambil data utama transaksi
+            String sqlTrans = "SELECT t.*, COALESCE(p.nama, 'Non-Member') AS pelanggan, COALESCE(k.nama, 'Tanpa Kapster') AS kapster " +
+                              "FROM transaksi t LEFT JOIN pelanggan p ON t.id_pelanggan = p.id " +
+                              "LEFT JOIN kapster k ON t.id_kapster = k.id WHERE t.id = ?";
+            PreparedStatement ps = conn.prepareStatement(sqlTrans);
+            ps.setInt(1, idTransaksi);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                this.noNota = rs.getString("nomor_nota");
+                if(this.noNota == null) this.noNota = "INV-" + idTransaksi; 
+
+                // Isi header struk
+                lblNomorNota.setText("No. " + this.noNota);
+                lblNamaPelanggan.setText(rs.getString("pelanggan"));
+                lblNamaKapster.setText(rs.getString("kapster"));
+                lblHargaSubtotal.setText("Rp " + String.format("%,d", rs.getInt("subtotal")).replace(',', '.'));
+                lblHargaSubtotal1.setText("- Rp " + String.format("%,d", rs.getInt("diskon")).replace(',', '.'));
+                lblHargaSubtotal2.setText("Rp " + String.format("%,d", rs.getInt("total")).replace(',', '.'));
+                lblMetodeBayar.setText(rs.getString("metode_pembayaran"));
+                lblPoinDidapat.setText("(Lihat di riwayat)"); // Fallback histori
+                lblPoinDidapat.setForeground(new java.awt.Color(204, 204, 204));
+
+                try {
+                    Date tgl = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(rs.getString("tanggal"));
+                    lblWaktuTransaksi.setText(new SimpleDateFormat("dd MMM yyyy, HH.mm").format(tgl));
+                } catch (Exception ex) {
+                    lblWaktuTransaksi.setText(rs.getString("tanggal"));
+                }
+
+                // Ambil & Render List Item
+                PanelItem.setLayout(new javax.swing.BoxLayout(PanelItem, javax.swing.BoxLayout.Y_AXIS));
+                PanelItem.removeAll();
+                
+                String sqlDetail = "SELECT dt.jumlah, dt.harga_saat_ini, i.nama FROM detail_transaksi dt JOIN item i ON dt.id_item = i.id WHERE dt.id_transaksi = ?";
+                PreparedStatement psD = conn.prepareStatement(sqlDetail);
+                psD.setInt(1, idTransaksi);
+                ResultSet rsD = psD.executeQuery();
+                
+                while (rsD.next()) {
+                    javax.swing.JPanel baris = new javax.swing.JPanel(new java.awt.BorderLayout());
+                    baris.setBackground(java.awt.Color.WHITE);
+                    javax.swing.JPanel panelKiri = new javax.swing.JPanel();
+                    panelKiri.setLayout(new javax.swing.BoxLayout(panelKiri, javax.swing.BoxLayout.Y_AXIS));
+                    panelKiri.setBackground(java.awt.Color.WHITE);
+
+                    javax.swing.JLabel lNama = new javax.swing.JLabel(rsD.getString("nama"));
+                    lNama.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 13));
+                    
+                    int hrgSatuan = rsD.getInt("harga_saat_ini");
+                    int qty = rsD.getInt("jumlah");
+                    javax.swing.JLabel lDetail = new javax.swing.JLabel("Rp " + String.format("%,d", hrgSatuan).replace(',', '.') + "  x  " + qty);
+                    lDetail.setFont(new java.awt.Font("Segoe UI", java.awt.Font.PLAIN, 12));
+                    lDetail.setForeground(new java.awt.Color(102, 102, 102));
+                    
+                    panelKiri.add(lNama); panelKiri.add(lDetail);
+                    
+                    javax.swing.JLabel lHargaTotal = new javax.swing.JLabel("Rp " + String.format("%,d", hrgSatuan * qty).replace(',', '.'));
+                    lHargaTotal.setFont(new java.awt.Font("Segoe UI", java.awt.Font.PLAIN, 13));
+                    
+                    baris.add(panelKiri, java.awt.BorderLayout.CENTER);
+                    baris.add(lHargaTotal, java.awt.BorderLayout.EAST);
+                    PanelItem.add(baris);
+                    PanelItem.add(javax.swing.Box.createRigidArea(new java.awt.Dimension(0, 10)));
+                }
+                rsD.close(); psD.close();
+            }
+            rs.close(); ps.close();
+        } catch (Exception e) { e.printStackTrace(); }
+
+        PanelItem.revalidate(); PanelItem.repaint(); this.pack();
+        int maxHeight = java.awt.Toolkit.getDefaultToolkit().getScreenSize().height - 100;
+        if (this.getHeight() > maxHeight) this.setSize(this.getWidth(), maxHeight);
+        this.setLocationRelativeTo(null);
+        jScrollPane3.getVerticalScrollBar().setUnitIncrement(16);
+        
+        tambahkanTombolAksi(); // Panggil Injeksi Tombol
+    }
+
+    private void tambahkanTombolAksi() {
+        javax.swing.JPanel panelTombol = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 15, 10));
+        panelTombol.setBackground(new java.awt.Color(10, 10, 11)); 
+        
+        javax.swing.JButton btnPrint = new javax.swing.JButton("🖨️ Print Struk");
+        btnPrint.setBackground(new java.awt.Color(201, 168, 76));
+        btnPrint.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 13));
+        btnPrint.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnPrint.addActionListener(e -> printStruk());
+        
+        javax.swing.JButton btnDownload = new javax.swing.JButton("💾 Download PNG");
+        btnDownload.setBackground(new java.awt.Color(255, 255, 255));
+        btnDownload.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 13));
+        btnDownload.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnDownload.addActionListener(e -> downloadStruk());
+        
+        panelTombol.add(btnPrint);
+        panelTombol.add(btnDownload);
+        
+        // Memasukkan panel ke area bawah (SOUTH) dari jPanel3
+        jPanel3.add(panelTombol, java.awt.BorderLayout.SOUTH);
+        jPanel3.revalidate();
+    }
+
+    private void printStruk() {
+        java.awt.print.PrinterJob job = java.awt.print.PrinterJob.getPrinterJob();
+        job.setJobName("Struk_" + noNota);
+        job.setPrintable(new java.awt.print.Printable() {
+            public int print(java.awt.Graphics pg, java.awt.print.PageFormat pf, int pageNum) {
+                if (pageNum > 0) return java.awt.print.Printable.NO_SUCH_PAGE;
+                java.awt.Graphics2D g2 = (java.awt.Graphics2D) pg;
+                g2.translate(pf.getImageableX(), pf.getImageableY());
+                
+                // Perkecil sedikit menyesuaikan ukuran kertas printer 
+                double width = pf.getImageableWidth();
+                double compWidth = jPanel2.getWidth();
+                if (compWidth > width) {
+                    double scale = width / compWidth;
+                    g2.scale(scale, scale);
+                }
+                
+                jPanel2.printAll(g2); // Mencetak Area Putih Struk
+                return java.awt.print.Printable.PAGE_EXISTS;
+            }
+        });
+        
+        if (job.printDialog()) {
+            try { job.print(); } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Gagal mencetak: " + ex.getMessage());
+            }
+        }
+    }
+
+    private void downloadStruk() {
+        try {
+            java.awt.image.BufferedImage img = new java.awt.image.BufferedImage(
+                jPanel2.getWidth(), jPanel2.getHeight(), java.awt.image.BufferedImage.TYPE_INT_RGB);
+            jPanel2.paint(img.getGraphics());
+            
+            javax.swing.JFileChooser fileChooser = new javax.swing.JFileChooser();
+            fileChooser.setDialogTitle("Simpan Struk ke Komputer");
+            fileChooser.setSelectedFile(new java.io.File(noNota + ".png"));
+            
+            if (fileChooser.showSaveDialog(this) == javax.swing.JFileChooser.APPROVE_OPTION) {
+                java.io.File file = fileChooser.getSelectedFile();
+                if (!file.getName().toLowerCase().endsWith(".png")) {
+                    file = new java.io.File(file.getAbsolutePath() + ".png");
+                }
+                javax.imageio.ImageIO.write(img, "png", file);
+                JOptionPane.showMessageDialog(this, "Struk berhasil didownload di:\n" + file.getAbsolutePath());
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Gagal mendownload struk: " + e.getMessage());
+        }
     }
 
     /**
